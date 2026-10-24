@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="google" content="notranslate">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171522">
+  <meta name="description" content="RPG Nexus — gerencie personagens, grupos, universos e combates do seu multiverso.">
+  <title>RPG Nexus — Multiverso de Campanha</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">✦</span>
+      <div>
+        <b>RPG NEXUS</b>
+        <small>Multiverso de Campanha</small>
+      </div>
+    </div>
+
+    <nav aria-label="Navegação principal">
+      <button type="button" data-tab="dashboard">Painel</button>
+      <button type="button" data-tab="characters">Personagens</button>
+      <button type="button" data-tab="map">Mapa</button>
+      <button type="button" data-tab="groups">Grupos</button>
+      <button type="button" data-tab="initiative">Iniciativa</button>
+    </nav>
+
+    <span id="dbStatus" class="db">Conectando…</span>
+    <button id="themeBtn" class="icon-btn" type="button"
+      title="Alternar tema" aria-label="Alternar tema">☼</button>
+  </header>
+
+  <main>
+    <!-- =====================================================
+         PAINEL PRINCIPAL
+    ====================================================== -->
+    <section id="dashboard" class="page active">
+      <div class="hero">
+        <div>
+          <span class="eyebrow">MULTIVERSO RPG</span>
+          <h1>Crie. Conecte.<br><em>Controle a campanha.</em></h1>
+          <p>
+            Um painel para misturar Dragon Ball, Solo Leveling,
+            Demon Slayer, One Piece, Jujutsu Kaisen e Undertale
+            em uma única campanha.
+          </p>
+
+          <div class="toolbar">
+            <button class="primary" type="button" data-tab="characters">
+              ＋ Criar personagem / NPC
+            </button>
+            <button class="secondary" type="button" data-tab="groups">
+              ⚔ Gerenciar grupos
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-orb">
+          <div class="orb-core">NEXUS</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <span>Personagens</span>
+          <strong id="dashChars">0</strong>
+          <small>salvos no Nexus</small>
+        </article>
+
+        <article class="stat-card">
+          <span>NPCs</span>
+          <strong id="dashNpcs">0</strong>
+          <small>personagens não jogáveis</small>
+        </article>
+
+        <article class="stat-card">
+          <span>Universos</span>
+          <strong>6</strong>
+          <small>conectados ao sistema</small>
+        </article>
+
+        <article class="stat-card">
+          <span>Encontros no mapa</span>
+          <strong id="dashMarkers">0</strong>
+          <small>posições registradas</small>
+        </article>
+
+        <article class="stat-card">
+          <span>Grupos</span>
+          <strong id="dashGroups">0</strong>
+          <small>equipes registradas</small>
+        </article>
+
+        <article class="stat-card">
+          <span>Combatentes</span>
+          <strong id="dashCombatants">0</strong>
+          <small>na iniciativa</small>
+        </article>
+      </div>
+
+      <div class="two-col">
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Universos disponíveis</h2>
+            <span>6 portais</span>
+          </div>
+          <div id="universeGrid" class="universe-grid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">
+            <h2>Últimas atividades</h2>
+            <button id="clearAll" class="danger-link" type="button">
+              Limpar dados
+            </button>
+          </div>
+          <div id="activityLog" class="activity"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         PERSONAGENS
+    ====================================================== -->
+    <section id="characters" class="page">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">FICHA</span>
+          <h1>Gerador de personagens</h1>
+        </div>
+        <button class="secondary" id="randomize" type="button">
+          ✦ Gerar aleatório
+        </button>
+      </div>
+
+      <div class="editor-grid">
+        <form id="charForm" class="panel form-panel">
+          <div class="form-grid">
+            <label>
+              Nome
+              <input id="charName" required placeholder="Ex.: Kael">
+            </label>
+
+            <label>
+              Universo
+              <select id="charUniverse"></select>
+            </label>
+
+            <label>
+              Origem / raça
+              <input id="charOrigin" placeholder="Humano, Saiyajin...">
+            </label>
+
+            <label>
+              Nível
+              <input id="charLevel" type="number" min="1" max="999" value="1">
+            </label>
+
+            <label>
+              Vitalidade
+              <input id="charHp" type="number" min="1" value="100">
+            </label>
+
+            <label>
+              Energia
+              <input id="charEnergy" type="number" min="0" value="100">
+            </label>
+          </div>
+
+          <label>
+            Descrição
+            <textarea id="charDesc" rows="3"
+              placeholder="História, personalidade e contexto..."></textarea>
+          </label>
+
+          <div class="form-grid">
+            <label>
+              Aparência
+              <textarea id="charAppearance" rows="2"
+                placeholder="Cabelo, olhos, roupa, armadura..."></textarea>
+            </label>
+
+            <label>
+              Imagem da aparência
+              <span class="muted">(opcional)</span>
+              <input id="charImage" type="file" accept="image/*">
+            </label>
+          </div>
+
+          <img id="charImagePreview" class="character-image-preview"
+            alt="Prévia da aparência" hidden>
+
+          <div class="power-box">
+            <div class="panel-title">
+              <h3>Poderes</h3>
+              <span>2 obrigatórios</span>
+            </div>
+            <div id="powers"></div>
+            <button type="button" class="secondary small" id="addPower">
+              ＋ Poder extra
+            </button>
+          </div>
+
+          <div class="techniques-box">
+            <div class="panel-title">
+              <h3>6 técnicas por poder</h3>
+              <span>mínimo 6 para cada poder</span>
+            </div>
+            <div id="techniques"></div>
+          </div>
+
+          <div class="power-box">
+            <div class="panel-title">
+              <h3>Artefatos</h3>
+              <span>opcionais</span>
+            </div>
+            <div id="characterArtifacts" class="form-grid"></div>
+          </div>
+
+          <button class="primary full" type="submit">
+            Salvar personagem no Nexus
+          </button>
+        </form>
+
+        <aside class="panel preview">
+          <div class="panel-title">
+            <h2>Prévia da ficha</h2>
+            <span id="previewUniverse">Universo</span>
+          </div>
+          <div class="character-card" id="characterPreview"></div>
+        </aside>
+      </div>
+
+      <section class="panel">
+        <div class="panel-title">
+          <h2>Personagens salvos</h2>
+          <span id="charCount">0</span>
+        </div>
+        <div id="characterList" class="character-list"></div>
+      </section>
+    </section>
+
+    <!-- =====================================================
+         MAPA
+    ====================================================== -->
+    <section id="map" class="page">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">NEXUS MAP</span>
+          <h1>Mapa da campanha</h1>
+        </div>
+
+        <div class="toolbar">
+          <button id="centerMap" class="secondary" type="button">
+            ◎ Centralizar
+          </button>
+          <button id="clearMarkers" class="secondary" type="button">
+            Limpar encontros
+          </button>
+        </div>
+      </div>
+
+      <div class="map-layout">
+        <section class="panel map-panel">
+          <div class="map-wrap">
+            <canvas id="worldMap"></canvas>
+            <div class="map-help">
+              Clique no mapa para registrar um encontro
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel marker-panel">
+          <div class="panel-title">
+            <h2>Encontros</h2>
+            <span id="markerCount">0</span>
+          </div>
+
+          <p class="muted">
+            Escolha um personagem e clique em uma região do mapa.
+          </p>
+
+          <label>
+            Personagem
+            <select id="markerCharacter"></select>
+          </label>
+
+          <label>
+            Tipo
+            <select id="markerType">
+              <option value="ally">Aliado</option>
+              <option value="enemy">Inimigo</option>
+              <option value="quest">Missão</option>
+              <option value="location">Local</option>
+            </select>
+          </label>
+
+          <div id="markerList" class="marker-list"></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         GRUPOS
+         groups.js monta a interface neste espaço.
+    ====================================================== -->
+    <section id="groups" class="page">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">EQUIPES E FACÇÕES</span>
+          <h1>Grupos de combate</h1>
+          <p>
+            Organize personagens, crie equipes e prepare seus grupos
+            para participar das batalhas.
+          </p>
+        </div>
+      </div>
+
+      <div id="rpgGroupsMount"></div>
+    </section>
+
+    <!-- =====================================================
+         INICIATIVA
+    ====================================================== -->
+    <section id="initiative" class="page">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">COMBATE</span>
+          <h1>Controle de iniciativa</h1>
+        </div>
+
+        <div class="toolbar">
+          <button id="nextTurn" class="primary" type="button">
+            Próximo turno ▶
+          </button>
+          <button id="resetInit" class="secondary" type="button">
+            Resetar
+          </button>
+        </div>
+      </div>
+
+      <div class="initiative-layout">
+        <section class="panel">
+          <div class="add-combatant">
+            <input id="combatName" placeholder="Nome do combatente">
+
+            <select id="combatChar">
+              <option value="">Sem personagem</option>
+            </select>
+
+            <input id="combatInit" type="number"
+              placeholder="Iniciativa" value="10">
+
+            <button id="addCombat" class="primary" type="button">
+              Adicionar
+            </button>
+          </div>
+
+          <div id="initiativeList" class="initiative-list"></div>
+        </section>
+
+        <aside class="panel turn-panel">
+          <span class="eyebrow">TURNO ATUAL</span>
+          <strong id="turnNumber">1</strong>
+
+          <div id="currentCombatant" class="current">
+            Nenhum combatente
+          </div>
+
+          <div class="mini-stats">
+            <div>
+              <span>Rodada</span>
+              <b id="roundNumber">1</b>
+            </div>
+            <div>
+              <span>Total</span>
+              <b id="combatTotal">0</b>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+
+    <!-- Scripts carregados uma única vez -->
+  <script src="data.js"></script>
+  <script src="sync.js"></script>
+  <script src="app.js"></script>
+  <script src="map.js"></script>
+  <script src="initiative.js"></script>
+  <script src="groups.js"></script>
+  <script src="npc.js"></script>
+  <script src="admin.js"></script>
+  <script src="scene3d.js"></script>
+</body>
+</html>
